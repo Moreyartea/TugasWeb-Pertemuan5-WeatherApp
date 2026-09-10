@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App — Pertemuan 5</title>
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <div id="app" class="min-h-screen">
+      <!-- HEADER -->
+      <header class="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+          <h1 class="text-lg font-bold text-gray-800 dark:text-gray-100">☁️ Weather App</h1>
+          <button
+            id="theme-toggle"
+            aria-label="Toggle dark mode"
+            class="text-xl rounded-full w-9 h-9 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
+            <span id="theme-icon">🌙</span>
+          </button>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div class="max-w-2xl mx-auto px-4 pb-3">
+          <form id="search-form" class="flex gap-2">
+            <input
+              id="city-input"
+              type="text"
+              placeholder="Cari kota... (mis. Medan)"
+              autocomplete="off"
+              class="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              type="submit"
+              class="shrink-0 rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm font-medium transition"
+            >
+              Cari
+            </button>
+            <button
+              type="button"
+              id="unit-toggle"
+              class="shrink-0 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            >
+              °C
+            </button>
+          </form>
+
+          <!-- HISTORY CHIPS -->
+          <div class="mt-3 flex items-center justify-between" id="history-header" hidden>
+            <div id="history-list" class="flex flex-wrap gap-2"></div>
+          </div>
+          <button
+            id="clear-history"
+            class="mt-2 text-xs text-red-500 hover:text-red-600 underline"
+            hidden
+          >
+            Hapus Riwayat
+          </button>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <main class="max-w-2xl mx-auto px-4 py-6">
+        <!-- ERROR BANNER -->
+        <div
+          id="error-banner"
+          class="mb-4 rounded-lg bg-red-100 dark:bg-red-900/40 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 text-sm flex items-center gap-2"
+          hidden
+        >
+          <span>⚠️</span>
+          <span id="error-message"></span>
+        </div>
+
+        <!-- LOADING SKELETON -->
+        <div id="loading-skeleton" class="animate-pulse rounded-2xl bg-white dark:bg-gray-800 shadow p-6 space-y-4" hidden>
+          <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="flex items-center gap-4">
+            <div class="h-16 w-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+            <div class="h-10 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          </div>
+          <div class="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </div>
+
+        <!-- WEATHER CARD -->
+        <div
+          id="weather-card"
+          class="rounded-2xl bg-white dark:bg-gray-800 shadow-lg p-6 text-gray-800 dark:text-gray-100"
+          hidden
+        >
+          <p class="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400" id="card-city"></p>
+                    <a id="card-map-link" href="#" target="_blank" rel="noopener" class="text-xs text-blue-500 hover:underline">Lihat di peta ↗</a>
+          <div class="flex items-center gap-4 mt-2">
+            <img id="card-icon" alt="ikon cuaca" class="h-16 w-16" />
+            <span id="card-temp" class="text-5xl font-bold"></span>
+          </div>
+          <p id="card-description" class="mt-2 capitalize text-gray-600 dark:text-gray-300"></p>
+          <p id="card-updated" class="text-xs text-gray-400 dark:text-gray-500"></p>
+          <p id="card-humidity" class="mt-1 text-sm text-gray-500 dark:text-gray-400"></p>
+          <p id="card-feels-like" class="text-sm text-gray-500 dark:text-gray-400"></p>
+          <p id="card-minmax" class="text-sm text-gray-500 dark:text-gray-400"></p>
+          
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 text-sm text-gray-600 dark:text-gray-300">
+            <div><p class="text-xs text-gray-400 dark:text-gray-500">Angin</p><p id="card-wind"></p></div>
+            <div><p class="text-xs text-gray-400 dark:text-gray-500">Tekanan</p><p id="card-pressure"></p></div>
+            <div><p class="text-xs text-gray-400 dark:text-gray-500">Awan</p><p id="card-clouds"></p></div>
+            <div><p class="text-xs text-gray-400 dark:text-gray-500">Jarak Pandang</p><p id="card-visibility"></p></div>
+            <div><p class="text-xs text-gray-400 dark:text-gray-500">Terbit</p><p id="card-sunrise"></p></div>
+            <div><p class="text-xs text-gray-400 dark:text-gray-500">Terbenam</p><p id="card-sunset"></p></div>
+            <div id="card-rain-wrap" hidden><p class="text-xs text-gray-400 dark:text-gray-500">Hujan (1 jam)</p><p id="card-rain"></p></div>
+            <div id="card-snow-wrap" hidden><p class="text-xs text-gray-400 dark:text-gray-500">Salju (1 jam)</p><p id="card-snow"></p></div>
+          </div>
+        </div>
+        
+        <!-- EMPTY STATE -->
+        <div id="empty-state" class="text-center text-gray-400 dark:text-gray-500 py-16">
+          <p class="text-4xl mb-2">🔍</p>
+          <p class="text-sm">Cari nama kota untuk melihat cuaca saat ini</p>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

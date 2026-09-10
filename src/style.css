@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Small custom touches not worth a utility class */
+#history-list .chip {
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+#history-list .chip:hover {
+  transform: translateY(-1px);
+}
