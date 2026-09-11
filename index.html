@@ -4,122 +4,533 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App — Pertemuan 5</title>
+
+    <meta
+      name="description"
+      content="Asgard Weather — Weather App menggunakan OpenWeatherMap API."
+    />
+
+    <title>Asgard Weather — Pertemuan 5</title>
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
-  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
-    <div id="app" class="min-h-screen">
-      <!-- HEADER -->
-      <header class="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-700">
-        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 class="text-lg font-bold text-gray-800 dark:text-gray-100">☁️ Weather App</h1>
-          <button
-            id="theme-toggle"
-            aria-label="Toggle dark mode"
-            class="text-xl rounded-full w-9 h-9 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-          >
-            <span id="theme-icon">🌙</span>
-          </button>
+
+  <body>
+    <div id="app">
+
+      <aside class="sidebar">
+
+        <div class="brand">
+          <div class="brand-lightning">⚡</div>
+          <h1>ASGARD</h1>
+          <span>WEATHER</span>
         </div>
 
-        <!-- SEARCH BAR -->
-        <div class="max-w-2xl mx-auto px-4 pb-3">
-          <form id="search-form" class="flex gap-2">
-            <input
-              id="city-input"
-              type="text"
-              placeholder="Cari kota... (mis. Medan)"
-              autocomplete="off"
-              class="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <button
-              type="submit"
-              class="shrink-0 rounded-lg bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm font-medium transition"
-            >
+        <div class="sidebar-label">
+          ALL REALMS<br />
+          ALL WEATHER
+        </div>
+
+        <nav class="sidebar-nav">
+
+          <button class="nav-item active" id="nav-home" type="button">
+            <span class="nav-icon">⌂</span>
+            <span>Home</span>
+          </button>
+
+          <button class="nav-item" id="nav-search" type="button">
+            <span class="nav-icon">⌕</span>
+            <span>Search</span>
+          </button>
+
+          <button class="nav-item" id="nav-history" type="button">
+            <span class="nav-icon">◷</span>
+            <span>History</span>
+          </button>
+
+        </nav>
+
+        <div class="sidebar-quote">
+          <p>
+            "Even the darkest skies reveal something beautiful."
+          </p>
+
+          <strong>— THOR</strong>
+        </div>
+
+        <div class="sidebar-asgard">
+          <div>⚡</div>
+          <span>ASGARD FOREVER</span>
+        </div>
+
+      </aside>
+
+      <main class="dashboard">
+
+        <div class="storm-background"></div>
+        <div class="storm-light storm-light-one"></div>
+        <div class="storm-light storm-light-two"></div>
+
+        <div class="thor-hero">
+          <img
+            src="/thor-hero.png"
+            alt="Thor dengan latar badai"
+          />
+        </div>
+
+        <div class="thor-caption">
+          <span>THE GOD OF THUNDER</span>
+          <span>WATCHES OVER EVERY SKY</span>
+        </div>
+
+        <header class="topbar">
+
+          <form id="search-form" class="search-form">
+
+            <div class="search-box">
+
+              <span class="search-icon">⌕</span>
+
+              <input
+                id="city-input"
+                type="text"
+                placeholder="Masukkan nama kota..."
+                autocomplete="off"
+                required
+              />
+
+              <button
+                type="button"
+                id="clear-search"
+                class="clear-search"
+                aria-label="Bersihkan pencarian"
+              >
+                ×
+              </button>
+
+            </div>
+
+            <button type="submit" class="search-button">
               Cari
             </button>
-            <button
-              type="button"
-              id="unit-toggle"
-              class="shrink-0 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-            >
-              °C
-            </button>
+
           </form>
 
-          <!-- HISTORY CHIPS -->
-          <div class="mt-3 flex items-center justify-between" id="history-header" hidden>
-            <div id="history-list" class="flex flex-wrap gap-2"></div>
-          </div>
           <button
-            id="clear-history"
-            class="mt-2 text-xs text-red-500 hover:text-red-600 underline"
-            hidden
+            id="unit-toggle"
+            class="unit-toggle"
+            type="button"
           >
-            Hapus Riwayat
+            °C
           </button>
-        </div>
-      </header>
 
-      <!-- MAIN CONTENT -->
-      <main class="max-w-2xl mx-auto px-4 py-6">
-        <!-- ERROR BANNER -->
-        <div
-          id="error-banner"
-          class="mb-4 rounded-lg bg-red-100 dark:bg-red-900/40 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 text-sm flex items-center gap-2"
-          hidden
-        >
-          <span>⚠️</span>
+        </header>
+
+        <div id="error-banner" class="error-banner" hidden>
+          <span class="error-icon">⚠</span>
           <span id="error-message"></span>
         </div>
 
-        <!-- LOADING SKELETON -->
-        <div id="loading-skeleton" class="animate-pulse rounded-2xl bg-white dark:bg-gray-800 shadow p-6 space-y-4" hidden>
-          <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div class="flex items-center gap-4">
-            <div class="h-16 w-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-            <div class="h-10 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <section id="loading-panel" class="loading-panel" hidden>
+
+          <div class="loading-title"></div>
+
+          <div class="loading-main">
+            <div class="loading-weather-icon"></div>
+            <div class="loading-temperature"></div>
           </div>
-          <div class="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div class="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded"></div>
+
+          <div class="loading-metrics">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+        </section>
+
+        <section id="empty-state" class="empty-state">
+
+          <div class="empty-lightning">⚡</div>
+
+          <h2>Welcome to Asgard Weather</h2>
+
+          <p>
+            Cari nama kota untuk melihat kondisi cuaca saat ini.
+          </p>
+
+          <span>
+            THE GOD OF THUNDER WATCHES OVER EVERY SKY
+          </span>
+
+        </section>
+
+        <div id="weather-content" hidden>
+
+          <section class="weather-card">
+
+            <div class="weather-card-header">
+
+              <div>
+
+                <span class="section-kicker">
+                  CURRENT WEATHER
+                </span>
+
+                <h2 id="card-city">
+                  Medan
+                </h2>
+
+                <p id="card-location">
+                  Sumatera Utara, Indonesia
+                </p>
+
+              </div>
+
+              <div class="weather-time">
+
+                <span id="card-date">
+                  --
+                </span>
+
+                <strong id="card-updated">
+                  --:--
+                </strong>
+
+              </div>
+
+            </div>
+
+            <div class="current-weather">
+
+              <div class="weather-visual">
+
+                <img
+                  id="card-icon"
+                  src=""
+                  alt="Ikon cuaca"
+                />
+
+              </div>
+
+              <div class="temperature-information">
+
+                <div
+                  id="card-temp"
+                  class="main-temperature"
+                >
+                  --°C
+                </div>
+
+                <h3 id="card-description">
+                  --
+                </h3>
+
+                <p id="card-feels-like">
+                  Terasa seperti --
+                </p>
+
+              </div>
+
+            </div>
+
+            <div class="weather-metrics">
+
+              <div class="metric">
+
+                <div class="metric-symbol humidity-symbol">
+                  💧
+                </div>
+
+                <div>
+                  <span>Kelembaban</span>
+                  <strong id="card-humidity">--</strong>
+                </div>
+
+              </div>
+
+              <div class="metric">
+
+                <div class="metric-symbol wind-symbol">
+                  ≋
+                </div>
+
+                <div>
+                  <span>Kecepatan Angin</span>
+                  <strong id="card-wind">--</strong>
+                </div>
+
+              </div>
+
+              <div class="metric">
+
+                <div class="metric-symbol pressure-symbol">
+                  ◉
+                </div>
+
+                <div>
+                  <span>Tekanan Udara</span>
+                  <strong id="card-pressure">--</strong>
+                </div>
+
+              </div>
+
+            </div>
+
+            <a
+              id="card-map-link"
+              class="map-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Lihat lokasi di peta ↗
+            </a>
+
+          </section>
+
+          <section class="dashboard-panel">
+
+            <div class="panel-header">
+
+              <div>
+                <h2>Hourly Forecast</h2>
+
+                <p>
+                  Perkiraan cuaca beberapa jam ke depan
+                </p>
+              </div>
+
+              <span class="panel-action">
+                OpenWeatherMap ↗
+              </span>
+
+            </div>
+
+            <div
+              id="hourly-list"
+              class="hourly-list"
+            ></div>
+
+          </section>
+
+          <div class="lower-grid">
+
+            <section class="dashboard-panel">
+
+              <div class="panel-header">
+
+                <div>
+                  <h2>Informasi Tambahan</h2>
+
+                  <p>
+                    Detail kondisi cuaca
+                  </p>
+                </div>
+
+              </div>
+
+              <div class="details-grid">
+
+                <div class="detail-card">
+
+                  <span class="detail-icon">◉</span>
+
+                  <span>Visibilitas</span>
+
+                  <strong id="card-visibility">
+                    --
+                  </strong>
+
+                </div>
+
+                <div class="detail-card">
+
+                  <span class="detail-icon gold">☀</span>
+
+                  <span>UV Index</span>
+
+                  <strong>
+                    N/A
+                  </strong>
+
+                  <small>
+                    Tidak tersedia
+                  </small>
+
+                </div>
+
+                <div class="detail-card">
+
+                  <span class="detail-icon gold">↑</span>
+
+                  <span>Sunrise</span>
+
+                  <strong id="card-sunrise">
+                    --:--
+                  </strong>
+
+                </div>
+
+                <div class="detail-card">
+
+                  <span class="detail-icon gold">↓</span>
+
+                  <span>Sunset</span>
+
+                  <strong id="card-sunset">
+                    --:--
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </section>
+
+            <section
+              id="history-panel"
+              class="dashboard-panel history-panel"
+            >
+
+              <div class="panel-header">
+
+                <div>
+                  <h2>Recent Cities</h2>
+
+                  <p>
+                    Kota yang pernah dicari
+                  </p>
+                </div>
+
+                <button
+                  id="clear-history"
+                  class="clear-history"
+                  type="button"
+                  hidden
+                >
+                  Hapus
+                </button>
+
+              </div>
+
+              <div
+                id="history-list"
+                class="history-list"
+              ></div>
+
+            </section>
+
+          </div>
+
+          <section class="dashboard-panel temperature-panel">
+
+            <div class="panel-header">
+
+              <div>
+                <h2>Temperature Range</h2>
+
+                <p>
+                  Rentang suhu hari ini
+                </p>
+              </div>
+
+            </div>
+
+            <div class="range-wrapper">
+
+              <div class="range-value">
+                <span>Minimum</span>
+                <strong id="card-min">--</strong>
+              </div>
+
+              <div class="range-track">
+                <span></span>
+              </div>
+
+              <div class="range-value right">
+                <span>Maksimum</span>
+                <strong id="card-max">--</strong>
+              </div>
+
+            </div>
+
+          </section>
+
+          <section class="asgard-banner">
+
+            <div class="banner-content">
+
+              <div>
+
+                <span>
+                  ASGARD WEATHER
+                </span>
+
+                <h2>
+                  A CLEARER TOMORROW
+                </h2>
+
+                <p>
+                  FOR A BRIGHTER REALM
+                </p>
+
+              </div>
+
+              <div class="banner-lightning">
+                ⚡
+              </div>
+
+            </div>
+
+          </section>
+
         </div>
 
-        <!-- WEATHER CARD -->
-        <div
-          id="weather-card"
-          class="rounded-2xl bg-white dark:bg-gray-800 shadow-lg p-6 text-gray-800 dark:text-gray-100"
+        <section
+          id="history-page"
+          class="history-page"
           hidden
         >
-          <p class="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400" id="card-city"></p>
-                    <a id="card-map-link" href="#" target="_blank" rel="noopener" class="text-xs text-blue-500 hover:underline">Lihat di peta ↗</a>
-          <div class="flex items-center gap-4 mt-2">
-            <img id="card-icon" alt="ikon cuaca" class="h-16 w-16" />
-            <span id="card-temp" class="text-5xl font-bold"></span>
+
+          <div class="history-page-header">
+
+            <div>
+
+              <span class="section-kicker">
+                ASGARD ARCHIVES
+              </span>
+
+              <h2>
+                Weather History
+              </h2>
+
+              <p>
+                Kota yang pernah kamu cari sebelumnya
+              </p>
+
+            </div>
+
+            <button
+              id="history-clear-page"
+              class="clear-history"
+              type="button"
+              hidden
+            >
+              Hapus Semua
+            </button>
+
           </div>
-          <p id="card-description" class="mt-2 capitalize text-gray-600 dark:text-gray-300"></p>
-          <p id="card-updated" class="text-xs text-gray-400 dark:text-gray-500"></p>
-          <p id="card-humidity" class="mt-1 text-sm text-gray-500 dark:text-gray-400"></p>
-          <p id="card-feels-like" class="text-sm text-gray-500 dark:text-gray-400"></p>
-          <p id="card-minmax" class="text-sm text-gray-500 dark:text-gray-400"></p>
-          
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 text-sm text-gray-600 dark:text-gray-300">
-            <div><p class="text-xs text-gray-400 dark:text-gray-500">Angin</p><p id="card-wind"></p></div>
-            <div><p class="text-xs text-gray-400 dark:text-gray-500">Tekanan</p><p id="card-pressure"></p></div>
-            <div><p class="text-xs text-gray-400 dark:text-gray-500">Awan</p><p id="card-clouds"></p></div>
-            <div><p class="text-xs text-gray-400 dark:text-gray-500">Jarak Pandang</p><p id="card-visibility"></p></div>
-            <div><p class="text-xs text-gray-400 dark:text-gray-500">Terbit</p><p id="card-sunrise"></p></div>
-            <div><p class="text-xs text-gray-400 dark:text-gray-500">Terbenam</p><p id="card-sunset"></p></div>
-            <div id="card-rain-wrap" hidden><p class="text-xs text-gray-400 dark:text-gray-500">Hujan (1 jam)</p><p id="card-rain"></p></div>
-            <div id="card-snow-wrap" hidden><p class="text-xs text-gray-400 dark:text-gray-500">Salju (1 jam)</p><p id="card-snow"></p></div>
-          </div>
-        </div>
-        
-        <!-- EMPTY STATE -->
-        <div id="empty-state" class="text-center text-gray-400 dark:text-gray-500 py-16">
-          <p class="text-4xl mb-2">🔍</p>
-          <p class="text-sm">Cari nama kota untuk melihat cuaca saat ini</p>
-        </div>
+
+          <div
+            id="history-page-list"
+            class="history-page-list"
+          ></div>
+
+        </section>
+
       </main>
+
     </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

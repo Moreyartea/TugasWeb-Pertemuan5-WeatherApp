@@ -1,25 +1,14 @@
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-/**
- * Custom error so the UI layer can branch on `error.type`
- * instead of parsing message strings.
- */
 export class WeatherApiError extends Error {
   constructor(message, type) {
     super(message);
     this.name = 'WeatherApiError';
-    this.type = type; // 'not-found' | 'network' | 'unknown'
+    this.type = type;
   }
 }
 
-/**
- * Fetch current weather for a given city.
- * @param {string} city
- * @param {'celsius' | 'fahrenheit'} unit - kept for symmetry; conversion is
- *   actually done client-side in utils/convert.js so toggling doesn't refetch.
- * @returns {Promise<object>} raw OpenWeatherMap response
- */
 export const getCurrentWeather = async (city, unit = 'celsius') => {
   const url = `${BASE_URL}/weather?q=${encodeURIComponent(
     city
@@ -29,7 +18,6 @@ export const getCurrentWeather = async (city, unit = 'celsius') => {
   try {
     res = await fetch(url);
   } catch (err) {
-    // fetch() itself rejects (DNS failure, offline, CORS, etc.)
     throw new WeatherApiError(
       'Periksa koneksi internet Anda.',
       'network'
@@ -50,11 +38,6 @@ export const getCurrentWeather = async (city, unit = 'celsius') => {
   return res.json();
 };
 
-/**
- * Placeholder for the deferred 5-day forecast feature.
- * Intentionally not called anywhere yet — see Bagian 1 & 5 of the plan.
- * Safe to implement later without touching current-weather flow.
- */
 export const getForecast = async (city) => {
   const url = `${BASE_URL}/forecast?q=${encodeURIComponent(
     city
